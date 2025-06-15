@@ -51,7 +51,7 @@ static char	*join(t_bag *bag, size_t *i, int *ready_to_go, size_t size)
 
 char	*read_and_join(t_bag *bag, size_t *i, int *ready_to_go, int fd)
 {
-	size_t	bytes_read;
+	ssize_t	bytes_read;
 
 	bytes_read = BUFFER_SIZE;
 	if (*i == 0)
