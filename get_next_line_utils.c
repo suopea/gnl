@@ -6,7 +6,7 @@
 /*   By: ssuopea <ssuopea@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/15 15:02:36 by ssuopea           #+#    #+#             */
-/*   Updated: 2025/06/15 15:05:58 by ssuopea          ###   ########.fr       */
+/*   Updated: 2025/06/15 15:30:01 by ssuopea          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 static char	*let_go(t_bag *bag, int *ready_to_go)
 {
 	free(bag->out);
+	bag->out = NULL;
 	*ready_to_go = 1;
 	return (0);
 }
