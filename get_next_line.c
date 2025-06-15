@@ -24,8 +24,6 @@ char	*get_next_line(int fd)
 	bag.out[0] = 0;
 	ready_to_go = 0;
 	bag.blocks_joined = 0;
-	if (!i)
-		i = 0;
 	while (!ready_to_go)
 		bag.out = read_and_join(&bag, &i, &ready_to_go, fd);
 	return (bag.out);
