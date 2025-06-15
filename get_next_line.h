@@ -6,7 +6,7 @@
 /*   By: ssuopea <ssuopea@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/07 09:50:28 by ssuopea           #+#    #+#             */
-/*   Updated: 2025/06/14 17:50:16 by ssuopea          ###   ########.fr       */
+/*   Updated: 2025/06/15 15:04:16 by ssuopea          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,5 +28,6 @@ typedef struct s_bag
 }	t_bag;
 
 char	*get_next_line(int fd);
+char	*read_and_join(t_bag *bag, size_t *i, int *ready_to_go, int fd);
 
 #endif
