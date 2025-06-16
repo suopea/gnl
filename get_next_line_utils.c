@@ -15,10 +15,9 @@
 static char	*let_go(t_bag *bag, int *ready_to_go)
 {
 	free(bag->out);
-	bag->out = malloc(1);
-	bag->out[0] = 0;
+	bag->out = NULL;
 	*ready_to_go = 1;
-	return (bag->out);
+	return (NULL);
 }
 
 static char	*join(t_bag *bag, size_t *i, int *ready_to_go, size_t size)
@@ -65,6 +64,7 @@ char	*read_and_join(t_bag *bag, size_t *i, int *ready_to_go, int fd)
 	{
 		*ready_to_go = 1;
 		bag->out = join(bag, i, ready_to_go, bytes_read);
+		*i = 0;
 	}
 	if (*i >= BUFFER_SIZE)
 	{
