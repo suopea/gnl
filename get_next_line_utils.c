@@ -65,9 +65,10 @@ char	*read_and_join(t_bag *bag, size_t *i, int *ready_to_go, int fd)
 	*ready_to_go = 1;
 	return (bag->out);
 	}	
-	else 
+	else
 	{
 		*ready_to_go = 1;
+		bag->block[bytes_read] = 0;
 		bag->out = join(bag, i, ready_to_go, bytes_read);
 		*i = 0;
 	}
