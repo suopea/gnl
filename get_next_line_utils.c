@@ -60,7 +60,12 @@ char	*read_and_join(t_bag *bag, size_t *i, int *ready_to_go, int fd)
 		bag->out = join(bag, i, ready_to_go, BUFFER_SIZE);
 	else if (bytes_read < 0 || (!bytes_read && !bag->blocks_joined))
 		return (let_go(bag, ready_to_go));
-	else if (bytes_read > 0 || (!bytes_read && bag->blocks_joined))
+	else if (!bytes_read && bag->blocks_joined)
+	{
+	*ready_to_go = 1;
+	return (bag->out);
+	}	
+	else 
 	{
 		*ready_to_go = 1;
 		bag->out = join(bag, i, ready_to_go, bytes_read);
