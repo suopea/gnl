@@ -12,12 +12,27 @@
 
 #include "get_next_line.h"
 
-static char	*let_go(t_stuff *stuff, int *ready_to_go)
+static char	*join(t_stuff *stuff, ssize_t *eye, int *ready_to_go);
+static char	*let_go(t_stuff *stuff, int *ready_to_go);
+
+char	*read_and_join(t_stuff *stuff, ssize_t *eye, int *ready_to_go, int fd)
 {
-	free(stuff->out);
-	stuff->out = NULL;
-	*ready_to_go = 1;
-	return (NULL);
+	ssize_t	bytes_read;
+
+	if (*eye == 0)
+	{
+		bytes_read = read(fd, stuff->in, BUFFER_SIZE);
+		if (bytes_read < 0 || (!bytes_read && !stuff->join_count))
+			return (let_go(stuff, ready_to_go));
+		stuff->in[bytes_read] = 0;
+	}
+	stuff->out = join(stuff, eye, ready_to_go);
+	if (!stuff->in[*eye])
+	{
+		*eye = 0;
+		stuff->join_count++;
+	}
+	return (stuff->out);
 }
 
 static char	*join(t_stuff *stuff, ssize_t *eye, int *ready_to_go)
@@ -48,22 +63,10 @@ static char	*join(t_stuff *stuff, ssize_t *eye, int *ready_to_go)
 	return (new);
 }
 
-char	*read_and_join(t_stuff *stuff, ssize_t *eye, int *ready_to_go, int fd)
+static char	*let_go(t_stuff *stuff, int *ready_to_go)
 {
-	ssize_t	bytes_read;
-
-	if (*eye == 0)
-	{
-		bytes_read = read(fd, stuff->in, BUFFER_SIZE);
-		if (bytes_read < 0 || (!bytes_read && !stuff->join_count))
-			return (let_go(stuff, ready_to_go));
-		stuff->in[bytes_read] = 0;
-	}
-	stuff->out = join(stuff, eye, ready_to_go);
-	if (!stuff->in[*eye])
-	{
-		*eye = 0;
-		stuff->join_count++;
-	}
-	return (stuff->out);
+	free(stuff->out);
+	stuff->out = NULL;
+	*ready_to_go = 1;
+	return (NULL);
 }
