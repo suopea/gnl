@@ -20,27 +20,26 @@ static char	*let_go(t_bag *bag, int *ready_to_go)
 	return (NULL);
 }
 
-static char	*join(t_bag *bag, size_t *i, int *ready_to_go, size_t size)
+static char	*join(t_bag *bag, ssize_t *i, int *ready_to_go)
 {
 	char	*new;
-	size_t	eye;
-	size_t	pen;
+	ssize_t	pen;
 
-	eye = 0;
 	pen = 0;
-	new = malloc(BUFFER_SIZE * (bag->blocks_joined + 1) + 1);
+	new = malloc(BUFFER_SIZE * (bag->join_count + 1) + 1);
 	if (!new)
 		return (let_go(bag, ready_to_go));
-	if (bag->out[0])
+	while (bag->out[pen])
 	{
-		while (bag->out[eye])
-			new[pen++] = bag->out[eye++];
+		new[pen] = bag->out[pen];
+		pen++;
 	}
-	while (*i < size && bag->block[*i] != '\n')
-		new[pen++] = bag->block[(*i)++];
-	if (bag->block[*i] == '\n')
-	{
+	while (bag->in[*i] != '\n' && bag->in[*i])
+		new[pen++] = bag->in[(*i)++];
+	if (bag->in[*i] == '\n' || (!bag->in[*i] && *i < BUFFER_SIZE))
 		*ready_to_go = 1;
+	if (bag->in[*i] == '\n')
+	{
 		new[pen++] = '\n';
 		*i += 1;
 	}
@@ -49,33 +48,54 @@ static char	*join(t_bag *bag, size_t *i, int *ready_to_go, size_t size)
 	return (new);
 }
 
-char	*read_and_join(t_bag *bag, size_t *i, int *ready_to_go, int fd)
+char	*what_to_do(t_bag *bag, ssize_t *i, int *ready_to_go, int fd)
 {
 	ssize_t	bytes_read;
 
 	bytes_read = BUFFER_SIZE;
 	if (*i == 0)
-		bytes_read = read(fd, bag->block, BUFFER_SIZE);
-	if (bytes_read == BUFFER_SIZE)
-		bag->out = join(bag, i, ready_to_go, BUFFER_SIZE);
-	else if (bytes_read < 0 || (!bytes_read && !bag->blocks_joined))
-		return (let_go(bag, ready_to_go));
-	else if (!bytes_read && bag->blocks_joined)
 	{
-	*ready_to_go = 1;
-	return (bag->out);
-	}	
-	else
-	{
-		*ready_to_go = 1;
-		bag->block[bytes_read] = 0;
-		bag->out = join(bag, i, ready_to_go, bytes_read);
-		*i = 0;
+		bytes_read = read(fd, bag->in, BUFFER_SIZE);
+		if (bytes_read < 0 || (!bytes_read && !bag->join_count))
+			return (let_go(bag, ready_to_go));
+		bag->in[bytes_read] = 0;
 	}
-	if (*i >= BUFFER_SIZE)
+	bag->out = join(bag, i, ready_to_go);
+	if (!bag->in[*i])
 	{
 		*i = 0;
-		bag->blocks_joined++;
+		bag->join_count++;
 	}
 	return (bag->out);
 }
+
+// char	*read_and_join(t_bag *bag, size_t *i, int *ready_to_go, int fd)
+// {
+// 	ssize_t	bytes_read;
+//
+// 	bytes_read = BUFFER_SIZE;
+// 	if (*i == 0)
+// 		bytes_read = read(fd, bag->in, BUFFER_SIZE);
+// 	if (bytes_read == BUFFER_SIZE)
+// 		bag->out = join(bag, i, ready_to_go, BUFFER_SIZE);
+// 	else if (bytes_read < 0 || (!bytes_read && !bag->join_count))
+// 		return (let_go(bag, ready_to_go));
+// 	else if (!bytes_read && bag->join_count)
+// 	{
+// 	*ready_to_go = 1;
+// 	return (bag->out);
+// 	}	
+// 	else
+// 	{
+// 		*ready_to_go = 1;
+// 		bag->in[bytes_read] = 0;
+// 		bag->out = join(bag, i, ready_to_go, bytes_read);
+// 		*i = 0;
+// 	}
+// 	if (*i >= BUFFER_SIZE)
+// 	{
+// 		*i = 0;
+// 		bag->join_count++;
+// 	}
+// 	return (bag->out);
+// }

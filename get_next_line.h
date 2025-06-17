@@ -17,17 +17,18 @@
 # include <stdlib.h>
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 4000
+#  define BUFFER_SIZE 10000000
 # endif
 
 typedef struct s_bag
 {
-	char	block[BUFFER_SIZE];
+	char	in[BUFFER_SIZE + 1];
 	char	*out;
-	size_t	blocks_joined;
+	size_t	join_count;
 }	t_bag;
 
 char	*get_next_line(int fd);
-char	*read_and_join(t_bag *bag, size_t *i, int *ready_to_go, int fd);
+// char	*read_and_join(t_bag *bag, size_t *i, int *ready_to_go, int fd);
+char	*what_to_do(t_bag *bag, ssize_t *i, int *ready_to_go, int fd);
 
 #endif

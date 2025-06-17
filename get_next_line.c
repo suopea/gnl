@@ -15,7 +15,7 @@
 char	*get_next_line(int fd)
 {
 	static t_bag	bag;
-	static size_t	i;
+	static ssize_t	i;
 	int				ready_to_go;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
@@ -23,8 +23,8 @@ char	*get_next_line(int fd)
 	bag.out = malloc(1);
 	bag.out[0] = 0;
 	ready_to_go = 0;
-	bag.blocks_joined = 0;
+	bag.join_count = 0;
 	while (!ready_to_go)
-		bag.out = read_and_join(&bag, &i, &ready_to_go, fd);
+		bag.out = what_to_do(&bag, &i, &ready_to_go, fd);
 	return (bag.out);
 }
