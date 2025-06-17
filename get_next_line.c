@@ -14,17 +14,19 @@
 
 char	*get_next_line(int fd)
 {
-	static t_bag	bag;
-	static ssize_t	i;
+	static t_stuff	stuff;
+	static ssize_t	eye;
 	int				ready_to_go;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
-		return (0);
-	bag.out = malloc(1);
-	bag.out[0] = 0;
+		return (NULL);
+	stuff.out = malloc(1);
+	if (!stuff.out)
+		return (NULL);
+	stuff.out[0] = 0;
+	stuff.join_count = 0;
 	ready_to_go = 0;
-	bag.join_count = 0;
 	while (!ready_to_go)
-		bag.out = what_to_do(&bag, &i, &ready_to_go, fd);
-	return (bag.out);
+		stuff.out = read_and_join(&stuff, &eye, &ready_to_go, fd);
+	return (stuff.out);
 }
